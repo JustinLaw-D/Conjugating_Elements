@@ -64,6 +64,8 @@ tg := m_g^(-1); th := (m_g^(-1))*(m_g^(-1))*(m_h^(-1))*m_g*m_g;
 c := automorphismConjugatingElement(qa4_1,tg,th);
 
 c;
+assert c*m_g/c eq tg; // check this worked
+assert c*m_h/c eq th;
 
 cNorm := Norm(c);
 ff :=  Parent(Numerator(cNorm));
@@ -76,6 +78,8 @@ tg := (m_g^(-1))*m_h*m_g; th := m_h*(m_g^(-1))*m_h*m_g*(m_h^(-1));
 c := automorphismConjugatingElement(qa4_1,tg,th);
 
 c;
+assert c*m_g/c eq tg; // check this worked
+assert c*m_h/c eq th;
 
 cNorm := Norm(c);
 ff :=  Parent(Numerator(cNorm));
