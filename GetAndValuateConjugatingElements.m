@@ -1,3 +1,38 @@
+
+matrixOfRelations := function(quat_alg,tg,th)
+	// Set up quaternion algebra and important elements
+	i := quat_alg.1; j := quat_alg.2; k := quat_alg.3; // set up quaternion algebra
+	qbar := BaseField(quat_alg).1; wbar := BaseField(quat_alg).2;
+	I_g := qbar;
+	I_h := qbar;
+	I_gh := wbar;
+	m_g := (i+I_g)/2;
+	Q := (2*I_gh-I_g*I_h)/(I_g*I_h-4);
+	m_h := -(i*j)/(2*I_g^2-8) + (i*Q)/2 + I_h/2;
+	A := -Norm(i);
+	B := -Norm(j);
+
+	g_const,g_i,g_j,g_k := Explode(Coordinates(m_g));
+	h_const,h_i,h_j,h_k := Explode(Coordinates(m_h));
+	tg_const,tg_i,tg_j,tg_k := Explode(Coordinates(tg));
+	th_const,th_i,th_j,th_k := Explode(Coordinates(th));
+
+	g_const_row := [tg_i*A-g_i*A, tg_j*B-g_j*B, -tg_k*A*B+g_k*A*B]; // relations coming from conjugation
+        g_i_row := [tg_const-g_const, -tg_k*B-g_k*B, tg_j*B+g_j*B];
+        g_j_row := [tg_k*A+g_k*A, tg_const-g_const, -tg_i*A-g_i*A];
+        g_k_row := [tg_j+g_j, -tg_i-g_i, tg_const-g_const];
+
+	h_const_row := [th_i*A-h_i*A, th_j*B-h_j*B, -th_k*A*B+h_k*A*B];
+        h_i_row := [th_const-h_const, -th_k*B-h_k*B, th_j*B+h_j*B];
+        h_j_row := [th_k*A+h_k*A, th_const-h_const, -th_i*A-h_i*A];
+        h_k_row := [th_j+h_j, -th_i-h_i, th_const-h_const];
+
+	// return matrix
+
+	return Matrix([g_const_row, g_i_row, g_j_row, g_k_row,h_const_row, h_i_row, h_j_row, h_k_row]);
+end function;
+
+
 automorphismConjugatingElement:=function(QA,tg,th)
 	i := QA.1; j := QA.2; k := QA.3; // set up quaternion algebra
 	M := matrixOfRelations(QA,tg,th); // get matrix of relations
@@ -67,41 +102,6 @@ conjugatingElementForAutomorphism:=function(QA,tg,th) // takes a quaternion alge
     return c;
 end function;
 
-
-
-matrixOfRelations := function(quat_alg,tg,th)
-	// Set up quaternion algebra and important elements
-	i := quat_alg.1; j := quat_alg.2; k := quat_alg.3; // set up quaternion algebra
-	qbar := BaseField(quat_alg).1; wbar := BaseField(quat_alg).2;
-	I_g := qbar;
-	I_h := qbar;
-	I_gh := wbar;
-	m_g := (i+I_g)/2;
-	Q := (2*I_gh-I_g*I_h)/(I_g*I_h-4);
-	m_h := -(i*j)/(2*I_g^2-8) + (i*Q)/2 + I_h/2;
-	A := -Norm(i);
-	B := -Norm(j);
-
-	g_const,g_i,g_j,g_k := Explode(Coordinates(m_g));
-	h_const,h_i,h_j,h_k := Explode(Coordinates(m_h));
-	tg_const,tg_i,tg_j,tg_k := Explode(Coordinates(tg));
-	th_const,th_i,th_j,th_k := Explode(Coordinates(th));
-
-	g_const_row := [tg_i*A-g_i*A, tg_j*B-g_j*B, -tg_k*A*B+g_k*A*B]; // relations coming from conjugation
-        g_i_row := [tg_const-g_const, -tg_k*B-g_k*B, tg_j*B+g_j*B];
-        g_j_row := [tg_k*A+g_k*A, tg_const-g_const, -tg_i*A-g_i*A];
-        g_k_row := [tg_j+g_j, -tg_i-g_i, tg_const-g_const];
-
-	h_const_row := [th_i*A-h_i*A, th_j*B-h_j*B, -th_k*A*B+h_k*A*B];
-        h_i_row := [th_const-h_const, -th_k*B-h_k*B, th_j*B+h_j*B];
-        h_j_row := [th_k*A+h_k*A, th_const-h_const, -th_i*A-h_i*A];
-        h_k_row := [th_j+h_j, -th_i-h_i, th_const-h_const];
-
-	// return matrix
-
-	return Matrix([g_const_row, g_i_row, g_j_row, g_k_row,h_const_row, h_i_row, h_j_row, h_k_row]);
-
-end function;
 
 
 valuationInFF:=function(f,x)
