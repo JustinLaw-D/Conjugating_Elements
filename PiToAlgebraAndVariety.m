@@ -1,5 +1,3 @@
-Attach("QAforKG.m");
-
 //We set up the coordinate ring of the canonical component of the character variety
 
 G<g,h>:=FreeGroup(2);
@@ -7,6 +5,7 @@ G<g,h>:=FreeGroup(2);
 // for convenience, we define gi, hi to be the inverse element. This is because G is already
 gi:=g^-1;
 hi:=h^-1;
+
 
 charVarTwoGenGroup:=function(word) //takes as input a word in the free group <g,h>. This is assumed to be the single relation of a 2-bridge knot group, where the generators g,h are conjugate. The function returns a reduced affine curve (potentially in multiple components) that is the closure in the character variety of the variety of (absolutely) irreducible characters.
     freeGroup:=Parent(word);
@@ -55,50 +54,3 @@ tautologicalQuaternionAlgebra:=function(variety) // takes a character variety of
     return QA;
 end function;
 
-
-conjugatingElementForAutomorphism:=function(QA,tg,th) // takes a quaternion algebra and two targets for g, h. Again, g,h are assumed conjugate.
-    gS:=SetToIndexedSet(Generators(QA));
-    u:=gS[1];
-    i:=gS[2];
-    j:=gS[3];
-
-    FF<I_g, I_gh>:=BaseRing(QA);
-    
-    m_g := (i+I_g*u)/2; //
-    Q := (2*I_gh*u-I_g*I_g*u)/(I_g*I_g*u-4*u);
-    m_h := -(i*j)/((2*I_g^2-8)*u) + (i*Q)/2*u + (I_g/2)*u;
-
-    // m_g and m_h represent the images of g,h under a generic representation whose character is in this character variety
-    // we use a very ugly process to figure out where their targets are
-    m_tg := u;
-    tg_sequence:=ElementToSequence(tg);
-    for term in tg_sequence do
-	if term eq 1 then
-	    m_tg:=m_tg*m_g;
-	elif term eq -1 then
-	    m_tg:=m_tg*(m_g)^(-1);
-	elif term eq 2 then
-	    m_tg:=m_tg*m_h;
-	elif term eq -2 then
-	    m_tg:=m_tg*(m_h)^(-1);
-	end if;
-    end for;
-
-    m_th := u;
-    th_sequence:=ElementToSequence(th);
-    for term in th_sequence do 
-	if term eq 1 then
-	    m_th:=m_th*m_g;
-	elif term eq -1 then
-	    m_th:=m_th*(m_g)^(-1);
-	elif term eq 2 then
-	    m_th:=m_th*m_h;
-	elif term eq -2 then
-	    m_th:=m_th*(m_h)^(-1);
-	end if;
-    end for;
-    
-    c := automorphismConjugatingElement(QA,m_tg,m_th);
-
-    return c;
-end function;
